@@ -4,6 +4,7 @@
 
 :root {
     --header-height: 72px;
+    --nav-gap: 20px;             /* espace entre les titres du header */
     --gutter: 48px;              /* marge gauche / droite de toutes les sections */
     --content-max: 1200px;       /* largeur max du contenu */
     --section-pad-top: 80px;     /* espace au-dessus de chaque section */
@@ -83,7 +84,7 @@ body {
 .navigation-links {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: var(--nav-gap);
 
     margin-left: auto;
 }
@@ -125,16 +126,18 @@ body {
 }
 
 
-/* BOUTON DE LANGUE FR / EN — en bout de ligne, séparé par un trait fin */
+/* BOUTON DE LANGUE FR / EN — même design que les titres du header, sans effet bouton */
 
 .lang-toggle {
     position: relative;
 
-    margin: 0;
-    padding: 0 0 0 20px;
+    -webkit-appearance: none;
+    appearance: none;
+
+    margin: 0 0 0 var(--nav-gap);
+    padding: 0;
 
     border: 0;
-    border-left: 1px solid #D1CABD;
     border-radius: 0;
 
     background: none;
@@ -143,7 +146,7 @@ body {
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.04em;
-    line-height: 1;
+    line-height: inherit;
 
     color: #000000;
 
@@ -162,8 +165,8 @@ body {
 
     background-color: #D1CABD;
 
-    left: calc(50% + 10px);
-    bottom: -16px;
+    left: 50%;
+    bottom: -15px;
 
     transform: translateX(-50%) scale(0);
 
@@ -173,11 +176,6 @@ body {
 .lang-toggle:hover::after,
 .lang-toggle:focus-visible::after {
     transform: translateX(-50%) scale(1);
-}
-
-.lang-toggle:focus-visible {
-    outline: 1px solid #000000;
-    outline-offset: 4px;
 }
 
 
@@ -1323,8 +1321,8 @@ body {
 
     /* Header */
 
-    .navigation-links {
-        gap: 14px;
+    :root {
+        --nav-gap: 14px;
     }
 
 
@@ -2721,16 +2719,32 @@ body {
 
 @media (max-width: 600px) {
 
-    /* Header : nom au-dessus, liens dessous */
+    /* Header : nom + bouton de langue sur la 1re ligne, liens dessous */
+    :root {
+        --nav-gap: 18px;
+    }
+
     .main-navigation {
-        flex-direction: column;
-        justify-content: center;
-        gap: 12px;
+        flex-wrap: wrap;
+        align-content: center;
+        justify-content: space-between;
+        row-gap: 12px;
+    }
+
+    .logo {
+        order: 1;
+    }
+
+    .lang-toggle {
+        order: 2;
+        margin-left: 0;
     }
 
     .navigation-links {
+        order: 3;
+        flex-basis: 100%;
+        justify-content: center;
         margin-left: 0;
-        gap: 18px;
     }
 
     .logo,
@@ -2744,14 +2758,6 @@ body {
         width: 8px;
         height: 8px;
         bottom: -10px;
-    }
-
-    .lang-toggle {
-        padding-left: 14px;
-    }
-
-    .lang-toggle::after {
-        left: calc(50% + 7px);
     }
 
     /* Hero : hauteur selon le contenu (les listes s'ouvrent dans le flux) */
@@ -2969,7 +2975,7 @@ body {
 
 /* =========================================================
    HEADER — TRÈS PETITS ÉCRANS (≤ 380 px)
-   Les 4 liens + le bouton de langue restent sur une seule ligne
+   Les 4 liens restent sur une seule ligne
    ========================================================= */
 
 .navigation-links a,
@@ -2979,20 +2985,12 @@ body {
 
 @media (max-width: 380px) {
 
-    .navigation-links {
-        gap: 10px;
+    :root {
+        --nav-gap: 10px;
     }
 
     .navigation-links a,
     .lang-toggle {
         font-size: 10px;
-    }
-
-    .lang-toggle {
-        padding-left: 10px;
-    }
-
-    .lang-toggle::after {
-        left: calc(50% + 5px);
     }
 }
