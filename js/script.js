@@ -68,18 +68,37 @@ if (experienceTexts.length > 0) {
 
                 observer.unobserve(element);
 
-                // Crée une place fixe pour chaque caractère
+                // Crée une place fixe pour chaque caractère,
+                // regroupés par mot pour que le texte passe à la ligne entre les mots
                 element.textContent = "";
 
-                const characters = Array.from(fullText).map((character) => {
-                    const span = document.createElement("span");
+                const characters = [];
 
-                    span.className = "typewriter-char";
-                    span.textContent = character;
+                fullText.split(" ").forEach((word, wordIndex) => {
+                    if (wordIndex > 0) {
+                        const space = document.createElement("span");
 
-                    element.appendChild(span);
+                        space.className = "typewriter-char";
+                        space.textContent = " ";
 
-                    return span;
+                        element.appendChild(space);
+                        characters.push(space);
+                    }
+
+                    const wordSpan = document.createElement("span");
+                    wordSpan.className = "typewriter-word";
+
+                    Array.from(word).forEach((character) => {
+                        const span = document.createElement("span");
+
+                        span.className = "typewriter-char";
+                        span.textContent = character;
+
+                        wordSpan.appendChild(span);
+                        characters.push(span);
+                    });
+
+                    element.appendChild(wordSpan);
                 });
 
                 let characterIndex = 0;

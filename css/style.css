@@ -946,9 +946,13 @@ body {
    TYPEWRITER — POSITION FIXE DES CARACTÈRES
    ========================================================= */
 
+/* Les mots restent entiers, mais le texte peut passer à la ligne entre deux mots */
+.experience-typewriter .typewriter-word {
+    white-space: nowrap;
+}
+
 .experience-typewriter .typewriter-char {
     visibility: hidden;
-    white-space: pre;
 }
 
 .experience-typewriter .typewriter-char.is-visible {
@@ -2794,19 +2798,43 @@ body {
         font-size: 12px;
     }
 
-    /* Expérience */
+    /* Expérience : photo recadrée au format smartphone (3:2).
+       Le cadre s'agrandit si le texte ne tient pas : il reste toujours entier dans la photo. */
+    .experience-hero {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+
+        aspect-ratio: 3 / 2;
+    }
+
+    .experience-hero img {
+        position: absolute;
+        inset: 0;
+
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+        object-position: center;
+    }
+
     .experience-hero::after {
         height: 75%;
     }
 
     .experience-hero .experience-summary {
-        left: 14px;
-        right: 14px;
-        bottom: 12px;
+        position: relative;
+
+        left: auto;
+        right: auto;
+        bottom: auto;
+
+        padding: 48px 16px 14px;
     }
 
     .experience-hero .experience-summary h2 {
-        font-size: 13px;
+        font-size: 16px;
         line-height: 1.2;
     }
 
