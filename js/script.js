@@ -52,6 +52,64 @@ setTimeout(() => {
 
 const experienceTexts = document.querySelectorAll(".experience-typewriter");
 
+// Crée une place fixe pour chaque caractère,
+// regroupés par mot pour que le texte passe à la ligne entre les mots
+function buildExperienceCharacters(element, fullText) {
+    element.textContent = "";
+
+    const characters = [];
+
+    fullText.split(" ").forEach((word, wordIndex) => {
+        if (wordIndex > 0) {
+            const space = document.createElement("span");
+
+            space.className = "typewriter-char";
+            space.textContent = " ";
+
+            element.appendChild(space);
+            characters.push(space);
+        }
+
+        const wordSpan = document.createElement("span");
+        wordSpan.className = "typewriter-word";
+
+        Array.from(word).forEach((character) => {
+            const span = document.createElement("span");
+
+            span.className = "typewriter-char";
+            span.textContent = character;
+
+            wordSpan.appendChild(span);
+            characters.push(span);
+        });
+
+        element.appendChild(wordSpan);
+    });
+
+    return characters;
+}
+
+function normalizeExperienceText(text) {
+    return text.replace(/\s+/g, " ").trim();
+}
+
+// Change le texte d'une photo (utilisé par la traduction FR / EN).
+// Si l'animation a déjà démarré, le nouveau texte s'affiche directement en entier.
+function setExperienceText(element, text) {
+    const fullText = normalizeExperienceText(text);
+
+    clearTimeout(element.typewriterTimer);
+
+    if (element.dataset.typed !== "true") {
+        element.textContent = fullText;
+        return;
+    }
+
+    buildExperienceCharacters(element, fullText).forEach((character) => {
+        character.classList.add("is-visible");
+    });
+}
+
 if (experienceTexts.length > 0) {
 
     const experienceObserver = new IntersectionObserver(
@@ -62,44 +120,13 @@ if (experienceTexts.length > 0) {
                 if (!entry.isIntersecting) return;
 
                 const element = entry.target;
-                const fullText = element.textContent
-                    .replace(/\s+/g, " ")
-                    .trim();
+                const fullText = normalizeExperienceText(element.textContent);
 
                 observer.unobserve(element);
 
-                // Crée une place fixe pour chaque caractère,
-                // regroupés par mot pour que le texte passe à la ligne entre les mots
-                element.textContent = "";
+                element.dataset.typed = "true";
 
-                const characters = [];
-
-                fullText.split(" ").forEach((word, wordIndex) => {
-                    if (wordIndex > 0) {
-                        const space = document.createElement("span");
-
-                        space.className = "typewriter-char";
-                        space.textContent = " ";
-
-                        element.appendChild(space);
-                        characters.push(space);
-                    }
-
-                    const wordSpan = document.createElement("span");
-                    wordSpan.className = "typewriter-word";
-
-                    Array.from(word).forEach((character) => {
-                        const span = document.createElement("span");
-
-                        span.className = "typewriter-char";
-                        span.textContent = character;
-
-                        wordSpan.appendChild(span);
-                        characters.push(span);
-                    });
-
-                    element.appendChild(wordSpan);
-                });
+                const characters = buildExperienceCharacters(element, fullText);
 
                 let characterIndex = 0;
 
@@ -122,7 +149,7 @@ if (experienceTexts.length > 0) {
                     }
 
                     if (characterIndex < characters.length) {
-                        setTimeout(writeExperienceText, delay);
+                        element.typewriterTimer = setTimeout(writeExperienceText, delay);
                     }
                 }
 

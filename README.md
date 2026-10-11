@@ -10,9 +10,17 @@ Site statique (HTML, CSS, JavaScript), sans dépendance ni étape de build.
 index.html          Page unique (hero, à propos, projets, expérience, outils, recommandations, contact)
 css/style.css       Styles + responsive (≤ 900 px tablette, ≤ 600 px mobile)
 js/script.js        Animations (machine à écrire, apparitions au défilement, bandeau d'outils)
+js/i18n.js          Traduction anglaise (bouton EN / FR du header)
 images/             Photos, visuels de projets, logos
 documents/          CV et fichier Excel de l'étude TikTok
 ```
+
+## Version anglaise
+
+La page se charge en français. Le bouton « EN » en bout de header traduit toute la page, « FR » revient au français.
+Lien direct vers la version anglaise : https://manondesclaux.github.io/?lang=en
+
+Les traductions sont dans `js/i18n.js` (phrase française → phrase anglaise). Si un texte français change dans `index.html`, mettre à jour la ligne correspondante dans ce fichier, sinon il restera en français dans la version anglaise.
 
 ## Voir le site en local
 
