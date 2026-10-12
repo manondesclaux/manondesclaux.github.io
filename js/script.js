@@ -231,6 +231,145 @@ if (skillsMenu) {
 
 }
 
+
+/* ========================================
+   MENU DÉROULANT DES COMPÉTENCES (sous MANON DESCLAUX)
+   - survol du nom : les 3 familles
+   - survol (ou approche) d'un mot du hero : ses compétences
+   - clic sur un mot ou une compétence : section Projets
+   - écran tactile : un appui sur le nom ouvre / ferme le menu
+======================================== */
+
+const logoMenu = document.querySelector(".logo-menu");
+const logoLink = document.querySelector(".logo");
+const skillsDropdown = document.querySelector(".skills-dropdown");
+
+if (logoMenu && skillsDropdown) {
+
+    let closeTimer = null;
+
+    const isTouchScreen = window.matchMedia("(hover: none)");
+
+    function openSkillsDropdown(show) {
+        clearTimeout(closeTimer);
+
+        const changed = skillsDropdown.dataset.show !== show;
+
+        skillsDropdown.dataset.show = show;
+
+        // Rejoue l'apparition des compétences quand on passe d'un mot à l'autre
+        if (changed && skillsDropdown.classList.contains("is-open")) {
+            skillsDropdown.classList.remove("is-open");
+            void skillsDropdown.offsetWidth;
+        }
+
+        skillsDropdown.classList.add("is-open");
+        logoLink.setAttribute("aria-expanded", "true");
+    }
+
+    function closeSkillsDropdown() {
+        clearTimeout(closeTimer);
+
+        skillsDropdown.classList.remove("is-open");
+        logoLink.setAttribute("aria-expanded", "false");
+    }
+
+    // Laisse le temps au curseur de rejoindre le menu avant de le fermer
+    function closeSkillsDropdownSoon(delay) {
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(closeSkillsDropdown, delay);
+    }
+
+    logoLink.setAttribute("aria-expanded", "false");
+
+    /* Nom MANON DESCLAUX : toutes les compétences */
+    logoMenu.addEventListener("mouseenter", () => {
+        if (isTouchScreen.matches) return;
+
+        // Si le menu est déjà ouvert sur une famille (venant du hero), on la garde
+        if (!skillsDropdown.classList.contains("is-open")) {
+            openSkillsDropdown("all");
+        } else {
+            clearTimeout(closeTimer);
+        }
+    });
+
+    logoMenu.addEventListener("mouseleave", () => {
+        if (isTouchScreen.matches) return;
+        closeSkillsDropdownSoon(250);
+    });
+
+    logoLink.addEventListener("mouseenter", () => {
+        if (isTouchScreen.matches) return;
+        openSkillsDropdown("all");
+    });
+
+    logoLink.addEventListener("click", (event) => {
+        if (!isTouchScreen.matches) return;
+
+        // Écran tactile : le nom ouvre / ferme le menu au lieu de remonter en haut
+        event.preventDefault();
+
+        if (skillsDropdown.classList.contains("is-open")) {
+            closeSkillsDropdown();
+        } else {
+            openSkillsDropdown("all");
+        }
+    });
+
+    /* Mots DESIGN / BUSINESS / PRODUCT du hero : une seule famille */
+    document.querySelectorAll(".skill-menu-item").forEach((item) => {
+
+        item.addEventListener("mouseenter", () => {
+            if (isTouchScreen.matches) return;
+            openSkillsDropdown(item.dataset.skill);
+        });
+
+        item.addEventListener("mouseleave", () => {
+            if (isTouchScreen.matches) return;
+            closeSkillsDropdownSoon(800);
+        });
+
+        item.addEventListener("click", closeSkillsDropdown);
+    });
+
+    /* Clavier */
+    logoMenu.addEventListener("focusin", () => {
+        if (!skillsDropdown.classList.contains("is-open")) {
+            openSkillsDropdown("all");
+        }
+    });
+
+    logoMenu.addEventListener("focusout", (event) => {
+        if (!logoMenu.contains(event.relatedTarget)) {
+            closeSkillsDropdown();
+        }
+    });
+
+    document.querySelectorAll(".skill-menu-title").forEach((title) => {
+        title.addEventListener("focus", () => {
+            openSkillsDropdown(title.closest(".skill-menu-item").dataset.skill);
+        });
+
+        title.addEventListener("blur", () => {
+            closeSkillsDropdownSoon(150);
+        });
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeSkillsDropdown();
+    });
+
+    /* Clic sur une compétence (vers Projets) ou en dehors du menu : fermeture */
+    skillsDropdown.addEventListener("click", (event) => {
+        if (event.target.closest("a")) closeSkillsDropdown();
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!logoMenu.contains(event.target)) closeSkillsDropdown();
+    });
+}
+
 /* ========================================
    ANIMATION DES TITRES DE SECTION
 ======================================== */

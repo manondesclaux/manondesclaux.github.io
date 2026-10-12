@@ -22,7 +22,8 @@ const translationsEN = {
     "Manon Desclaux - Photo fun bas gauche": "Manon Desclaux - Fun photo, bottom left",
     "Manon Desclaux - Photo fun bas droite": "Manon Desclaux - Fun photo, bottom right",
 
-    /* HERO — compétences */
+    /* HERO + MENU DU NOM — compétences */
+    "Compétences": "Skills",
     "Culture design": "Design culture",
     "Analyse de performance": "Performance analysis",
     "Priorisation": "Prioritization",
