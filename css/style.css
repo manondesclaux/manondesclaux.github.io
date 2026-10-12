@@ -206,7 +206,7 @@ body {
 
     font-family: "Libre Franklin", sans-serif;
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 400;
 
     letter-spacing: 0.04em;
 
@@ -778,7 +778,8 @@ body {
    ========================================================= */
 
 .about {
-    padding: var(--section-pad-top) var(--gutter) var(--section-pad-bottom);
+    /* Espace réduit sous les cartes, avant la section Projets */
+    padding: var(--section-pad-top) var(--gutter) calc(var(--section-pad-bottom) * 0.5);
 
     background-color: #FAF6EF;
 }
@@ -882,14 +883,14 @@ body {
 }
 
 .about-card {
-    /* Carré : la hauteur suit la largeur. */
-    aspect-ratio: 1 / 1;
+    /* Un peu moins haut qu'un carré : la hauteur suit la largeur. */
+    aspect-ratio: 4 / 3;
 
     /* Le texte se règle sur la largeur intérieure de la carte (unités cqi : 224 px pour une carte de 288 px). */
     container-type: inline-size;
 
-    /* 32 px pour une carte de 288 px (28 px x 1,15) ; % = relatif à la largeur. */
-    padding: 11.1%;
+    /* 26 px pour une carte de 288 px ; % = relatif à la largeur. */
+    padding: 9%;
 
     background-color: #FFFFFF;
 
@@ -919,8 +920,8 @@ body {
 }
 
 .about-card h3 {
-    /* 35 px pour une carte de 288 px (30 px x 1,15) */
-    margin: 0 0 15.6cqi;
+    /* 18 px pour une carte de 288 px */
+    margin: 0 0 7.5cqi;
 
     font-family: "Libre Franklin", sans-serif;
     /* 15 px pour une carte de 288 px (13 px x 1,15) */
