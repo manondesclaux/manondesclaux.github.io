@@ -3072,4 +3072,13 @@ body {
 
         font-size: 11px;
     }
+
+    /* Expérience (Made, Popup House, Retail) : titres et textes des descriptions +1 px */
+    .experience-block h3 {
+        font-size: 13px;
+    }
+
+    .experience-proof p {
+        font-size: 14px;
+    }
 }
