@@ -29,3 +29,8 @@ Ouvrir `index.html` dans un navigateur, ou utiliser l'extension « Live Server �
 ## Mise en ligne
 
 Publié avec GitHub Pages depuis la branche `main` (dossier racine).
+
+## Mise à jour du cache (Safari, etc.)
+
+`index.html` charge `css/style.css`, `js/script.js` et `js/i18n.js` avec un numéro de version (`?v=AAAA-MM-JJ`).
+À chaque modification de ces fichiers, changer ce numéro dans `index.html` : les navigateurs rechargent alors les nouveaux fichiers au lieu de garder l'ancienne version en mémoire.

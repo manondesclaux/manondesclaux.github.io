@@ -296,6 +296,7 @@ body {
 
     color: #000000;
     text-decoration: none;
+    -webkit-text-decoration: none;
 
     cursor: pointer;
 
@@ -393,7 +394,9 @@ body {
 
 /* =========================================================
    HEADER — MENU DÉROULANT DES COMPÉTENCES (sous MANON DESCLAUX)
-   Superposé à la page : rien ne bouge quand il s'ouvre.
+   Même design que l'ancienne liste du hero : étiquettes encadrées
+   qui apparaissent une à une, sans fond derrière, centrées sous le nom
+   et de la même largeur que lui. Superposé : la page ne bouge pas.
    data-show="all" : les 3 familles (survol du nom)
    data-show="design" | "business" | "product" : une seule (survol d'un mot du hero)
    ========================================================= */
@@ -409,42 +412,29 @@ body {
 
 .skills-dropdown {
     position: absolute;
-    top: calc(100% - 14px);
-    left: -16px;
+    top: calc(100% - 18px);
+    left: 0;
+    right: 0;
 
     z-index: 10;
 
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 16px;
 
-    width: 252px;
     max-height: calc(100vh - var(--header-height));
-
-    padding: 16px;
 
     overflow-y: auto;
 
-    background-color: #FAF6EF;
-
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
-
-    opacity: 0;
     visibility: hidden;
 
-    transform: translateY(-6px);
-
-    transition:
-        opacity 200ms ease,
-        transform 200ms ease,
-        visibility 200ms ease;
+    transition: visibility 0s linear 240ms;
 }
 
 .skills-dropdown.is-open {
-    opacity: 1;
     visibility: visible;
 
-    transform: translateY(0);
+    transition: none;
 }
 
 /* Une seule famille affichée quand le menu vient d'un mot du hero */
@@ -458,16 +448,18 @@ body {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 5px;
 }
 
-/* Gros titre de compétence : gras et en majuscules */
+/* Gros titre de compétence : gras, en majuscules, à la taille du nom */
 .skills-dropdown-title {
+    margin-bottom: 3px;
+
     font-family: "Libre Franklin", sans-serif;
-    font-size: 18px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.04em;
-    line-height: 1.1;
+    line-height: 1.2;
     text-transform: uppercase;
     text-align: center;
     text-decoration: none;
@@ -478,7 +470,7 @@ body {
 .skills-dropdown-list {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
 
     margin: 0;
     padding: 0;
@@ -486,72 +478,62 @@ body {
     list-style: none;
 }
 
+/* Étiquettes : même style que l'ancienne liste du hero, en plus petit */
 .skills-dropdown-list a {
     display: block;
 
-    padding: 8px 14px;
+    padding: 5px 6px;
 
     border: 1px solid #000000;
 
     background-color: #FAF6EF;
 
     font-family: "Libre Franklin", sans-serif;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
     letter-spacing: 0.02em;
-    line-height: 1.4;
+    line-height: 1.3;
     text-align: center;
     text-decoration: none;
 
     color: #000000;
+}
+
+.skills-dropdown a:focus-visible {
+    outline: 1px solid #000000;
+    outline-offset: 3px;
+}
+
+/* Apparition une à une, comme avant (rejouée à chaque ouverture) */
+.skills-dropdown-title,
+.skills-dropdown-list li {
+    opacity: 0;
+
+    transform: translateY(-6px);
 
     transition:
-        background-color 160ms ease,
-        color 160ms ease;
+        opacity 180ms ease,
+        transform 180ms ease;
 }
 
-.skills-dropdown-list a:hover,
-.skills-dropdown-list a:focus-visible {
-    background-color: #000000;
-    color: #FAF6EF;
-}
-
-.skills-dropdown-title:focus-visible {
-    outline: 1px solid #000000;
-    outline-offset: 4px;
-}
-
-/* Apparition chronologique : titre puis compétences une à une
-   (rejouée à chaque ouverture et à chaque changement de famille) */
 .skills-dropdown.is-open .skills-dropdown-title,
 .skills-dropdown.is-open .skills-dropdown-list li {
-    animation: skillsDropdownIn 220ms ease both;
+    opacity: 1;
+
+    transform: translateY(0);
 }
 
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(1) { animation-delay: 40ms; }
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(2) { animation-delay: 90ms; }
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(3) { animation-delay: 140ms; }
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(4) { animation-delay: 190ms; }
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(5) { animation-delay: 240ms; }
-
-@keyframes skillsDropdownIn {
-    from {
-        opacity: 0;
-        transform: translateY(-6px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+.skills-dropdown.is-open .skills-dropdown-list li:nth-child(1) { transition-delay: 40ms; }
+.skills-dropdown.is-open .skills-dropdown-list li:nth-child(2) { transition-delay: 90ms; }
+.skills-dropdown.is-open .skills-dropdown-list li:nth-child(3) { transition-delay: 140ms; }
+.skills-dropdown.is-open .skills-dropdown-list li:nth-child(4) { transition-delay: 190ms; }
+.skills-dropdown.is-open .skills-dropdown-list li:nth-child(5) { transition-delay: 240ms; }
 
 @media (prefers-reduced-motion: reduce) {
 
     .skills-dropdown,
-    .skills-dropdown.is-open .skills-dropdown-title,
-    .skills-dropdown.is-open .skills-dropdown-list li {
-        animation: none;
+    .skills-dropdown-title,
+    .skills-dropdown-list li {
         transition: none;
     }
 }
@@ -2811,41 +2793,11 @@ body {
         order: 1;
     }
 
-    /* Menu des compétences : panneau pleine largeur sous le header,
-       compétences en étiquettes côte à côte (pas de défilement) */
-    .logo-menu {
-        position: static;
-    }
-
+    /* Menu des compétences : sous la ligne des liens, toujours centré sous le nom */
     .skills-dropdown {
-        top: 100%;
-        left: 0;
-        right: 0;
+        top: calc(100% + 36px);
 
-        width: auto;
-        max-height: calc(100vh - 120px);
-
-        gap: 18px;
-
-        padding: 20px var(--gutter) 24px;
-
-        border-bottom: 1px solid #D1CABD;
-
-        box-shadow: 0 18px 30px rgba(0, 0, 0, 0.06);
-    }
-
-    .skills-dropdown-title {
-        font-size: 15px;
-    }
-
-    .skills-dropdown-list {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .skills-dropdown-list a {
-        padding: 6px 10px;
+        max-height: calc(100vh - 110px);
     }
 
     .lang-toggle {
