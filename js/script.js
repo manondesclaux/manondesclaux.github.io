@@ -238,6 +238,7 @@ if (skillsMenu) {
    - survol (ou approche) d'un mot du hero : ses compétences
    - clic sur un mot ou une compétence : section Projets
    - écran tactile : un appui sur le nom ouvre / ferme le menu
+   - smartphone : pas de menu, le nom ramène en haut de page
 ======================================== */
 
 const logoMenu = document.querySelector(".logo-menu");
@@ -250,7 +251,14 @@ if (logoMenu && skillsDropdown) {
 
     const isTouchScreen = window.matchMedia("(hover: none)");
 
+    // Menu masqué (smartphone) : rien à ouvrir
+    function isSkillsDropdownAvailable() {
+        return getComputedStyle(skillsDropdown).display !== "none";
+    }
+
     function openSkillsDropdown(show) {
+        if (!isSkillsDropdownAvailable()) return;
+
         clearTimeout(closeTimer);
 
         const changed = skillsDropdown.dataset.show !== show;
@@ -305,7 +313,7 @@ if (logoMenu && skillsDropdown) {
     });
 
     logoLink.addEventListener("click", (event) => {
-        if (!isTouchScreen.matches) return;
+        if (!isTouchScreen.matches || !isSkillsDropdownAvailable()) return;
 
         // Écran tactile : le nom ouvre / ferme le menu au lieu de remonter en haut
         event.preventDefault();

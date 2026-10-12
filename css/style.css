@@ -2822,11 +2822,10 @@ body {
         order: 1;
     }
 
-    /* Menu des compétences : sous la ligne des liens, toujours centré sous le nom */
+    /* Pas de menu des compétences sous le nom sur smartphone :
+       les mots DESIGN / BUSINESS / PRODUCT du hero mènent directement à Projets */
     .skills-dropdown {
-        top: calc(100% + 36px);
-
-        max-height: calc(100vh - 110px);
+        display: none;
     }
 
     .lang-toggle {
