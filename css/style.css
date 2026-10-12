@@ -2131,6 +2131,34 @@ body {
 
 
 /* =========================================================
+   OUTILS — SMARTPHONE
+   Logos un peu plus petits et beaucoup plus rapprochés
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .tools-track {
+        padding: 28px 0;
+
+        /* Bandeau plus court : durée réduite pour garder une vitesse proche */
+        animation-duration: 20s;
+    }
+
+    .tool-item {
+        width: 64px;
+        height: 50px;
+
+        margin-right: 14px;
+    }
+
+    .tool-item img {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+
+/* =========================================================
    RECOMMANDATIONS
    ========================================================= */
 
