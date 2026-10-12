@@ -3051,3 +3051,24 @@ body {
         font-size: 10px;
     }
 }
+
+
+/* =========================================================
+   ÉCRAN ORDINATEUR (> 900 px)
+   Nom un peu plus grand ; le menu des compétences suit (même largeur,
+   titres à la taille du nom) avec des étiquettes à peine plus grandes
+   ========================================================= */
+
+@media (min-width: 901px) {
+
+    .logo,
+    .skills-dropdown-title {
+        font-size: 14px;
+    }
+
+    .skills-dropdown-list a {
+        padding: 6px 6px;
+
+        font-size: 11px;
+    }
+}
