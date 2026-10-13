@@ -1,3 +1,8 @@
+/* Préférence système « réduire les animations » */
+const prefersReducedMotion =
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const typewriterText = document.querySelector(".typewriter-text");
 
 const text = "TURNING NEEDS INTO PRODUCTS.";
@@ -40,9 +45,14 @@ function startTypewriter() {
     typeText();
 }
 
-setTimeout(() => {
-    startTypewriter();
-}, 800);
+if (prefersReducedMotion) {
+    // Pas d'effet machine à écrire : le texte s'affiche directement
+    typewriterText.textContent = text;
+} else {
+    setTimeout(() => {
+        startTypewriter();
+    }, 800);
+}
 
 
 
@@ -57,6 +67,17 @@ const experienceTexts = document.querySelectorAll(".experience-typewriter");
 function buildExperienceCharacters(element, fullText) {
     element.textContent = "";
 
+    // Phrase entière lue d'un bloc par les lecteurs d'écran
+    const readableText = document.createElement("span");
+    readableText.className = "visually-hidden";
+    readableText.textContent = fullText;
+    element.appendChild(readableText);
+
+    // Caractères animés : visibles, mais ignorés par les lecteurs d'écran
+    const animatedText = document.createElement("span");
+    animatedText.setAttribute("aria-hidden", "true");
+    element.appendChild(animatedText);
+
     const characters = [];
 
     fullText.split(" ").forEach((word, wordIndex) => {
@@ -66,7 +87,7 @@ function buildExperienceCharacters(element, fullText) {
             space.className = "typewriter-char";
             space.textContent = " ";
 
-            element.appendChild(space);
+            animatedText.appendChild(space);
             characters.push(space);
         }
 
@@ -83,7 +104,7 @@ function buildExperienceCharacters(element, fullText) {
             characters.push(span);
         });
 
-        element.appendChild(wordSpan);
+        animatedText.appendChild(wordSpan);
     });
 
     return characters;
@@ -127,6 +148,13 @@ if (experienceTexts.length > 0) {
                 element.dataset.typed = "true";
 
                 const characters = buildExperienceCharacters(element, fullText);
+
+                if (prefersReducedMotion) {
+                    characters.forEach((character) => {
+                        character.classList.add("is-visible");
+                    });
+                    return;
+                }
 
                 let characterIndex = 0;
 
@@ -178,17 +206,23 @@ if (skillsMenu) {
 
     const skillItems = skillsMenu.querySelectorAll(".skill-menu-item");
 
-    let skillsMenuDiscovered = false;
+    let skillsMenuDiscovered = prefersReducedMotion;
+
+    /* Nombre maximum de rappels (une animation ne doit pas durer indéfiniment) */
+    const maxSkillsHints = 3;
+    let skillsHintCount = 0;
 
     /* Tremblement toutes les 2 secondes */
     const skillsHintInterval = setInterval(() => {
 
-        /* Si le menu a déjà été découvert,
+        /* Si le menu a déjà été découvert, ou après 3 rappels,
            on arrête définitivement */
-        if (skillsMenuDiscovered) {
+        if (skillsMenuDiscovered || skillsHintCount >= maxSkillsHints) {
             clearInterval(skillsHintInterval);
             return;
         }
+
+        skillsHintCount++;
 
         /* Petit tremblement de chaque mot */
         skillItems.forEach((item) => {
@@ -332,6 +366,27 @@ if (toolsTrack && toolsWrapper) {
         toolsTrack.classList.remove("edge-fast");
         toolsTrack.classList.remove("is-hovered");
 
+    });
+
+    /* Pause / reprise : bouton clavier (visible au focus) ou appui sur le bandeau */
+    const toolsPauseButton = document.querySelector(".tools-pause");
+
+    function setToolsPaused(paused) {
+        toolsTrack.classList.toggle("is-paused", paused);
+
+        if (toolsPauseButton) {
+            toolsPauseButton.setAttribute("aria-pressed", String(paused));
+        }
+    }
+
+    if (toolsPauseButton) {
+        toolsPauseButton.addEventListener("click", () => {
+            setToolsPaused(!toolsTrack.classList.contains("is-paused"));
+        });
+    }
+
+    toolsWrapper.addEventListener("click", () => {
+        setToolsPaused(!toolsTrack.classList.contains("is-paused"));
     });
 }
 
