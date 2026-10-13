@@ -2966,4 +2966,15 @@ body {
     .about-cards {
         gap: 48px;
     }
+
+    /* À propos : plus d'air entre le bloc texte + photo et les cartes */
+    .about-main {
+        margin-bottom: 112px;
+    }
+
+    /* Titres de section : un peu plus d'espace au-dessus, le double en dessous */
+    .section-heading {
+        margin-top: 24px;
+        margin-bottom: calc(var(--heading-gap) * 2);
+    }
 }
