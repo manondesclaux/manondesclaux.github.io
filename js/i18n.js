@@ -10,6 +10,14 @@
 
 const translationsEN = {
 
+    /* ACCESSIBILITÉ (textes lus par les lecteurs d'écran) */
+    "Aller au contenu": "Skip to content",
+    "(nouvel onglet)": "(new tab)",
+    "(PDF, nouvel onglet)": "(PDF, new tab)",
+    "5 étoiles sur 5": "5 out of 5 stars",
+    "Outils": "Tools",
+    "Mettre en pause le défilement des outils": "Pause the scrolling tools",
+
     /* HEADER */
     "À PROPOS": "ABOUT",
     "PROJETS": "PROJECTS",
@@ -17,10 +25,6 @@ const translationsEN = {
 
     /* HERO — photos */
     "Manon Desclaux - Photo neutre": "Manon Desclaux - Neutral photo",
-    "Manon Desclaux - Photo fun haut gauche": "Manon Desclaux - Fun photo, top left",
-    "Manon Desclaux - Photo fun haut droite": "Manon Desclaux - Fun photo, top right",
-    "Manon Desclaux - Photo fun bas gauche": "Manon Desclaux - Fun photo, bottom left",
-    "Manon Desclaux - Photo fun bas droite": "Manon Desclaux - Fun photo, bottom right",
 
     /* HERO + MENU DU NOM — compétences */
     "Compétences": "Skills",
@@ -246,17 +250,39 @@ function setLanguage(language) {
     languageToggle.lang = english ? "fr" : "en";
     languageToggle.setAttribute(
         "aria-label",
-        english ? "Voir la page en français" : "View this page in English"
+        english ? "FR – Voir la page en français" : "EN – View this page in English"
     );
 
     languageToggle.dataset.language = language;
+
+    // Mémorise le choix pour la prochaine visite
+    try {
+        localStorage.setItem("portfolio-language", language);
+    } catch (error) {
+        // Stockage indisponible (navigation privée…) : on ignore
+    }
 }
 
 languageToggle.addEventListener("click", () => {
     setLanguage(languageToggle.dataset.language === "en" ? "fr" : "en");
 });
 
-// La page se charge en français ; un lien se terminant par ?lang=en l'ouvre directement en anglais
-if (new URLSearchParams(window.location.search).get("lang") === "en") {
-    setLanguage("en");
-}
+// La page se charge en français.
+// Priorité : lien se terminant par ?lang=en (ou ?lang=fr), puis dernière langue choisie.
+(function applyInitialLanguage() {
+    const fromUrl = new URLSearchParams(window.location.search).get("lang");
+
+    let saved = null;
+
+    try {
+        saved = localStorage.getItem("portfolio-language");
+    } catch (error) {
+        saved = null;
+    }
+
+    const language = fromUrl === "en" || fromUrl === "fr" ? fromUrl : saved;
+
+    if (language === "en") {
+        setLanguage("en");
+    }
+})();

@@ -1,3 +1,8 @@
+/* Préférence système « réduire les animations » */
+const prefersReducedMotion =
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const typewriterText = document.querySelector(".typewriter-text");
 
 const text = "TURNING NEEDS INTO PRODUCTS.";
@@ -40,9 +45,14 @@ function startTypewriter() {
     typeText();
 }
 
-setTimeout(() => {
-    startTypewriter();
-}, 800);
+if (prefersReducedMotion) {
+    // Pas d'effet machine à écrire : le texte s'affiche directement
+    typewriterText.textContent = text;
+} else {
+    setTimeout(() => {
+        startTypewriter();
+    }, 800);
+}
 
 
 
@@ -57,6 +67,17 @@ const experienceTexts = document.querySelectorAll(".experience-typewriter");
 function buildExperienceCharacters(element, fullText) {
     element.textContent = "";
 
+    // Phrase entière lue d'un bloc par les lecteurs d'écran
+    const readableText = document.createElement("span");
+    readableText.className = "visually-hidden";
+    readableText.textContent = fullText;
+    element.appendChild(readableText);
+
+    // Caractères animés : visibles, mais ignorés par les lecteurs d'écran
+    const animatedText = document.createElement("span");
+    animatedText.setAttribute("aria-hidden", "true");
+    element.appendChild(animatedText);
+
     const characters = [];
 
     fullText.split(" ").forEach((word, wordIndex) => {
@@ -66,7 +87,7 @@ function buildExperienceCharacters(element, fullText) {
             space.className = "typewriter-char";
             space.textContent = " ";
 
-            element.appendChild(space);
+            animatedText.appendChild(space);
             characters.push(space);
         }
 
@@ -83,7 +104,7 @@ function buildExperienceCharacters(element, fullText) {
             characters.push(span);
         });
 
-        element.appendChild(wordSpan);
+        animatedText.appendChild(wordSpan);
     });
 
     return characters;
@@ -122,11 +143,22 @@ if (experienceTexts.length > 0) {
                 const element = entry.target;
                 const fullText = normalizeExperienceText(element.textContent);
 
+                // Le premier slogan garde son rythme ; les suivants s'écrivent ~3 fois plus vite
+                const isFirstSlogan = element === experienceTexts[0];
+                const speed = isFirstSlogan ? 1 : 0.35;
+
                 observer.unobserve(element);
 
                 element.dataset.typed = "true";
 
                 const characters = buildExperienceCharacters(element, fullText);
+
+                if (prefersReducedMotion) {
+                    characters.forEach((character) => {
+                        character.classList.add("is-visible");
+                    });
+                    return;
+                }
 
                 let characterIndex = 0;
 
@@ -147,6 +179,8 @@ if (experienceTexts.length > 0) {
                     } else if ([".", ",", ":", ";"].includes(currentCharacter)) {
                         delay = 180;
                     }
+
+                    delay = Math.round(delay * speed);
 
                     if (characterIndex < characters.length) {
                         element.typewriterTimer = setTimeout(writeExperienceText, delay);
@@ -178,17 +212,23 @@ if (skillsMenu) {
 
     const skillItems = skillsMenu.querySelectorAll(".skill-menu-item");
 
-    let skillsMenuDiscovered = false;
+    let skillsMenuDiscovered = prefersReducedMotion;
+
+    /* Nombre maximum de rappels (une animation ne doit pas durer indéfiniment) */
+    const maxSkillsHints = 3;
+    let skillsHintCount = 0;
 
     /* Tremblement toutes les 2 secondes */
     const skillsHintInterval = setInterval(() => {
 
-        /* Si le menu a déjà été découvert,
+        /* Si le menu a déjà été découvert, ou après 3 rappels,
            on arrête définitivement */
-        if (skillsMenuDiscovered) {
+        if (skillsMenuDiscovered || skillsHintCount >= maxSkillsHints) {
             clearInterval(skillsHintInterval);
             return;
         }
+
+        skillsHintCount++;
 
         /* Petit tremblement de chaque mot */
         skillItems.forEach((item) => {
@@ -333,6 +373,27 @@ if (toolsTrack && toolsWrapper) {
         toolsTrack.classList.remove("is-hovered");
 
     });
+
+    /* Pause / reprise : bouton clavier (visible au focus) ou appui sur le bandeau */
+    const toolsPauseButton = document.querySelector(".tools-pause");
+
+    function setToolsPaused(paused) {
+        toolsTrack.classList.toggle("is-paused", paused);
+
+        if (toolsPauseButton) {
+            toolsPauseButton.setAttribute("aria-pressed", String(paused));
+        }
+    }
+
+    if (toolsPauseButton) {
+        toolsPauseButton.addEventListener("click", () => {
+            setToolsPaused(!toolsTrack.classList.contains("is-paused"));
+        });
+    }
+
+    toolsWrapper.addEventListener("click", () => {
+        setToolsPaused(!toolsTrack.classList.contains("is-paused"));
+    });
 }
 
 // ANIMATION PHOTO — SECTION À PROPOS
@@ -416,3 +477,167 @@ if (aboutPhoto && "IntersectionObserver" in window) {
         console.error("Impossible d'initialiser l'animation de la photo À propos.", error);
     }
 }
+
+
+/* =========================================================
+   PHOTOMATON — APPUI SUR ÉCRAN TACTILE
+   Sans survol possible, un appui révèle la photo fun,
+   un second appui revient à la photo neutre.
+   ========================================================= */
+
+const canHover = window.matchMedia && window.matchMedia("(hover: hover)").matches;
+
+if (!canHover) {
+    document.querySelectorAll(".photo-item").forEach((item) => {
+        item.addEventListener("click", () => {
+            item.classList.toggle("is-flipped");
+        });
+    });
+}
+
+
+/* =========================================================
+   MENU — SECTION EN COURS
+   La pastille du lien reste affichée pour la section visible.
+   ========================================================= */
+
+const navigationLinks = Array.from(document.querySelectorAll(".navigation-links a[href^='#']"));
+
+const trackedSections = navigationLinks
+    .map((link) => document.querySelector(link.getAttribute("href")))
+    .filter(Boolean);
+
+function setCurrentSection(id) {
+    navigationLinks.forEach((link) => {
+        const isCurrent = link.getAttribute("href") === "#" + id;
+
+        link.classList.toggle("is-current", isCurrent);
+
+        if (isCurrent) {
+            link.setAttribute("aria-current", "location");
+        } else {
+            link.removeAttribute("aria-current");
+        }
+    });
+}
+
+function updateCurrentSection() {
+    // Tout en bas de la page : la section Contact (courte) est la section en cours
+    const atBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+
+    if (atBottom && document.getElementById("contact")) {
+        setCurrentSection("contact");
+        return;
+    }
+
+    // Section qui occupe le milieu de l'écran
+    const middle = window.innerHeight / 2;
+    let current = null;
+
+    trackedSections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+
+        if (rect.top <= middle && rect.bottom > middle) {
+            current = section.id;
+        }
+    });
+
+    setCurrentSection(current);
+}
+
+if (trackedSections.length > 0) {
+    let currentSectionFrame = null;
+
+    window.addEventListener("scroll", () => {
+        if (currentSectionFrame) return;
+
+        currentSectionFrame = requestAnimationFrame(() => {
+            currentSectionFrame = null;
+            updateCurrentSection();
+        });
+    }, { passive: true });
+
+    window.addEventListener("resize", updateCurrentSection);
+
+    updateCurrentSection();
+}
+
+
+/* =========================================================
+   CONTACT — COPIE DE L'ADRESSE E-MAIL
+   Le lien ouvre toujours la messagerie ; en plus, l'adresse
+   est copiée, au cas où aucune messagerie n'est configurée.
+   ========================================================= */
+
+const contactEmail = "manondesclaux.pro@gmail.com";
+
+function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+    }
+
+    // Solution de repli pour les anciens navigateurs
+    return new Promise((resolve, reject) => {
+        const field = document.createElement("textarea");
+
+        field.value = text;
+        field.setAttribute("readonly", "");
+        field.style.position = "fixed";
+        field.style.opacity = "0";
+
+        document.body.appendChild(field);
+        field.select();
+
+        const copied = document.execCommand("copy");
+
+        document.body.removeChild(field);
+
+        if (copied) {
+            resolve();
+        } else {
+            reject();
+        }
+    });
+}
+
+document.querySelectorAll(".contact a[href^='mailto:']").forEach((link) => {
+    // Message de confirmation, annoncé aussi par les lecteurs d'écran
+    const feedback = document.createElement("span");
+
+    feedback.className = "copy-feedback";
+    feedback.setAttribute("role", "status");
+    feedback.setAttribute("aria-live", "polite");
+
+    link.insertAdjacentElement("afterend", feedback);
+
+    let feedbackTimer = null;
+
+    link.addEventListener("click", () => {
+        copyText(contactEmail)
+            .then(() => {
+                const english = document.documentElement.lang === "en";
+
+                // Sous l'adresse elle-même, inutile de la répéter
+                const showAddress = !link.classList.contains("contact-link");
+
+                const message = english ? "Address copied" : "Adresse copiée";
+
+                feedback.textContent = showAddress
+                    ? message + (english ? ": " : " : ") + contactEmail
+                    : message;
+
+                feedback.classList.add("is-visible");
+
+                clearTimeout(feedbackTimer);
+
+                feedbackTimer = setTimeout(() => {
+                    feedback.classList.remove("is-visible");
+                    feedback.textContent = "";
+                }, 3000);
+            })
+            .catch(() => {
+                // Copie impossible : le lien mailto fonctionne quand même
+            });
+    });
+});
