@@ -7,9 +7,9 @@
     --nav-gap: 20px;             /* espace entre les titres du header */
     --gutter: 48px;              /* marge gauche / droite de toutes les sections */
     --content-max: 1200px;       /* largeur max du contenu */
-    --section-pad-top: 80px;     /* espace au-dessus de chaque section */
+    --section-pad-top: 10px;     /* espace au-dessus de chaque section */
     --section-pad-bottom: 120px; /* espace sous chaque section */
-    --heading-gap: 64px;         /* espace entre le titre de section et son contenu */
+    --heading-gap: 32px;         /* espace entre le titre de section et son contenu */
 }
 
 @media (max-width: 900px) {
@@ -276,7 +276,7 @@ body {
     text-align: center;
 }
 
-/* Zone de survol élargie : le menu s'ouvre dès que le curseur s'approche du mot */
+/* Zone de clic élargie autour du mot */
 .skill-menu-item::before {
     content: "";
 
@@ -393,12 +393,7 @@ body {
 
 
 /* =========================================================
-   HEADER — MENU DÉROULANT DES COMPÉTENCES (sous MANON DESCLAUX)
-   Même design que l'ancienne liste du hero : étiquettes encadrées
-   qui apparaissent une à une, sans fond derrière, centrées sous le nom
-   et de la même largeur que lui. Superposé : la page ne bouge pas.
-   data-show="all" : les 3 familles (survol du nom)
-   data-show="design" | "business" | "product" : une seule (survol d'un mot du hero)
+   HEADER — NOM
    ========================================================= */
 
 .logo-menu {
@@ -408,134 +403,6 @@ body {
     align-items: center;
 
     align-self: stretch;
-}
-
-.skills-dropdown {
-    position: absolute;
-    top: calc(100% - 18px);
-    left: 0;
-    right: 0;
-
-    z-index: 10;
-
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    max-height: calc(100vh - var(--header-height));
-
-    overflow-y: auto;
-
-    visibility: hidden;
-
-    transition: visibility 0s linear 240ms;
-}
-
-.skills-dropdown.is-open {
-    visibility: visible;
-
-    transition: none;
-}
-
-/* Une seule famille affichée quand le menu vient d'un mot du hero */
-.skills-dropdown[data-show="design"] .skills-dropdown-group:not([data-skill="design"]),
-.skills-dropdown[data-show="business"] .skills-dropdown-group:not([data-skill="business"]),
-.skills-dropdown[data-show="product"] .skills-dropdown-group:not([data-skill="product"]) {
-    display: none;
-}
-
-.skills-dropdown-group {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 5px;
-}
-
-/* Gros titre de compétence : gras, en majuscules, à la taille du nom */
-.skills-dropdown-title {
-    margin-bottom: 3px;
-
-    font-family: "Libre Franklin", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    line-height: 1.2;
-    text-transform: uppercase;
-    text-align: center;
-    text-decoration: none;
-
-    color: #000000;
-}
-
-.skills-dropdown-list {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-
-    margin: 0;
-    padding: 0;
-
-    list-style: none;
-}
-
-/* Étiquettes : même style que l'ancienne liste du hero, en plus petit */
-.skills-dropdown-list a {
-    display: block;
-
-    padding: 5px 6px;
-
-    border: 1px solid #000000;
-
-    background-color: #FAF6EF;
-
-    font-family: "Libre Franklin", sans-serif;
-    font-size: 10px;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    line-height: 1.3;
-    text-align: center;
-    text-decoration: none;
-
-    color: #000000;
-}
-
-.skills-dropdown a:focus-visible {
-    outline: 1px solid #000000;
-    outline-offset: 3px;
-}
-
-/* Apparition une à une, comme avant (rejouée à chaque ouverture) */
-.skills-dropdown-title,
-.skills-dropdown-list li {
-    opacity: 0;
-
-    transform: translateY(-6px);
-
-    transition:
-        opacity 180ms ease,
-        transform 180ms ease;
-}
-
-.skills-dropdown.is-open .skills-dropdown-title,
-.skills-dropdown.is-open .skills-dropdown-list li {
-    opacity: 1;
-
-    transform: translateY(0);
-}
-
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(1) { transition-delay: 40ms; }
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(2) { transition-delay: 90ms; }
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(3) { transition-delay: 140ms; }
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(4) { transition-delay: 190ms; }
-.skills-dropdown.is-open .skills-dropdown-list li:nth-child(5) { transition-delay: 240ms; }
-
-@media (prefers-reduced-motion: reduce) {
-
-    .skills-dropdown,
-    .skills-dropdown-title,
-    .skills-dropdown-list li {
-        transition: none;
-    }
 }
 
 
@@ -723,7 +590,6 @@ body {
     align-items: center;
 
     width: 100%;
-
     margin-bottom: var(--heading-gap);
 }
 
@@ -883,14 +749,14 @@ body {
 }
 
 .about-card {
-    /* Un peu moins haut qu'un carré : la hauteur suit la largeur. */
-    aspect-ratio: 4 / 3;
+    /* Un peu plus haute que large : la hauteur suit la largeur (264 x 240 px sur ordinateur). */
+    aspect-ratio: 11 / 10;
 
-    /* Le texte se règle sur la largeur intérieure de la carte (unités cqi : 224 px pour une carte de 288 px). */
+    /* Le texte se règle sur la largeur intérieure de la carte (unités cqi : 212 px pour une carte de 264 px). */
     container-type: inline-size;
 
-    /* 26 px pour une carte de 288 px ; % = relatif à la largeur. */
-    padding: 9%;
+    /* 26 px pour une carte de 264 px ; % = relatif à la largeur. */
+    padding: 9.85%;
 
     background-color: #FFFFFF;
 
@@ -916,16 +782,16 @@ body {
     display: block;
 
     /* 18 px pour une carte de 288 px (16 px x 1,15) */
-    font-size: clamp(16px, 8.2cqi, 20px);
+    font-size: clamp(16px, 9.13cqi, 20px);
 }
 
 .about-card h3 {
     /* 18 px pour une carte de 288 px */
-    margin: 0 0 7.5cqi;
+    margin: 0 0 8.35cqi;
 
     font-family: "Libre Franklin", sans-serif;
     /* 15 px pour une carte de 288 px (13 px x 1,15) */
-    font-size: clamp(13px, 6.7cqi, 16px);
+    font-size: clamp(13px, 7.46cqi, 16px);
     font-weight: 500;
 
     line-height: 1.3;
@@ -939,7 +805,7 @@ body {
 
     font-family: "Libre Franklin", sans-serif;
     /* 15 px pour une carte de 288 px (13 px x 1,15) */
-    font-size: clamp(13px, 6.7cqi, 16px);
+    font-size: clamp(13px, 7.46cqi, 16px);
     font-weight: 400;
 
     line-height: 1.6;
@@ -2822,12 +2688,6 @@ body {
         order: 1;
     }
 
-    /* Pas de menu des compétences sous le nom sur smartphone :
-       les mots DESIGN / BUSINESS / PRODUCT du hero mènent directement à Projets */
-    .skills-dropdown {
-        display: none;
-    }
-
     .lang-toggle {
         order: 2;
         margin-left: 0;
@@ -3089,15 +2949,8 @@ body {
 
 @media (min-width: 901px) {
 
-    .logo,
-    .skills-dropdown-title {
+    .logo {
         font-size: 14px;
-    }
-
-    .skills-dropdown-list a {
-        padding: 6px 6px;
-
-        font-size: 11px;
     }
 
     /* Expérience (Made, Popup House, Retail) : titres et textes des descriptions +1 px */
@@ -3106,6 +2959,11 @@ body {
     }
 
     .experience-proof p {
-        font-size: 14px;
+        font-size: 15px;
+    }
+
+    /* À propos : cartes un peu plus étroites (espace élargi entre elles) */
+    .about-cards {
+        gap: 48px;
     }
 }
