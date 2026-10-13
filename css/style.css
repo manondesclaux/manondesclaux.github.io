@@ -121,7 +121,8 @@ body {
     transition: transform 180ms ease;
 }
 
-.navigation-links a:hover::after {
+.navigation-links a:hover::after,
+.navigation-links a.is-current::after {
     transform: translateX(-50%) scale(1);
 }
 
@@ -350,27 +351,6 @@ body {
 }
 
 
-/* Animation au défilement */
-
-.hero-skills-menu.scroll-hint .skill-menu-title {
-    animation: skillsScrollHint 500ms ease-out;
-}
-
-@keyframes skillsScrollHint {
-    0% {
-        transform: translateY(0);
-    }
-
-    45% {
-        transform: translateY(-4px);
-    }
-
-    100% {
-        transform: translateY(0);
-    }
-}
-
-
 /* Séparateurs entre DESIGN, BUSINESS et PRODUCT */
 
 .skill-menu-separator {
@@ -511,15 +491,18 @@ body {
     z-index: 2;
 }
 
-.photo-item:hover .photo-default {
+.photo-item:hover .photo-default,
+.photo-item.is-flipped .photo-default {
     opacity: 0;
 }
 
-.photo-item:hover .photo-hover {
+.photo-item:hover .photo-hover,
+.photo-item.is-flipped .photo-hover {
     opacity: 1;
 }
 
-.photo-item:hover img {
+.photo-item:hover img,
+.photo-item.is-flipped img {
     transform: scale(1.04);
 }
 
@@ -3092,8 +3075,7 @@ main:focus {
         transition: none;
     }
 
-    .skill-menu-item.is-hinting .skill-menu-title,
-    .hero-skills-menu.scroll-hint .skill-menu-title {
+    .skill-menu-item.is-hinting .skill-menu-title {
         animation: none;
     }
 
@@ -3101,4 +3083,71 @@ main:focus {
         display: none;
     }
 
+}
+
+
+/* =========================================================
+   CONTACT — CONFIRMATION « ADRESSE COPIÉE »
+   ========================================================= */
+
+.contact-item,
+.contact-action {
+    position: relative;
+}
+
+.copy-feedback {
+    position: absolute;
+
+    top: calc(100% + 8px);
+    left: 0;
+
+    font-family: "Libre Franklin", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+
+    color: #000000;
+
+    white-space: nowrap;
+
+    opacity: 0;
+    transform: translateY(-4px);
+
+    transition:
+        opacity 200ms ease,
+        transform 200ms ease;
+
+    pointer-events: none;
+}
+
+.contact-action .copy-feedback {
+    left: auto;
+    right: 0;
+}
+
+.copy-feedback.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Tablette et mobile : le bouton est aligné à gauche, le message aussi */
+
+@media (max-width: 900px) {
+
+    .contact-action .copy-feedback {
+        left: 0;
+        right: auto;
+    }
+
+    .contact-item .copy-feedback {
+        top: calc(100% + 4px);
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .copy-feedback {
+        transition: none;
+        transform: none;
+    }
 }
