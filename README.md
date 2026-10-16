@@ -1,4 +1,4 @@
-# Portfolio — Manon Desclaux
+# Portfolio - Manon Desclaux
 
 Portfolio de **Manon Desclaux**, Product Owner / Product Manager.
 
