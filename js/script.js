@@ -480,18 +480,71 @@ if (aboutPhoto && "IntersectionObserver" in window) {
 
 
 /* =========================================================
-   PHOTOMATON — APPUI SUR ÉCRAN TACTILE
-   Sans survol possible, un appui révèle la photo fun,
-   un second appui revient à la photo neutre.
+   PHOTOMATON — ANIMATION AUTOMATIQUE SUR ÉCRAN TACTILE
+   Sans survol possible, les 4 photos passent l'une après l'autre
+   en version fun puis reviennent à la photo neutre, en boucle,
+   tant que le photomaton est visible à l'écran.
    ========================================================= */
 
 const canHover = window.matchMedia && window.matchMedia("(hover: hover)").matches;
+const photoItems = Array.from(document.querySelectorAll(".photo-item"));
+const photobooth = document.querySelector(".photobooth-grid");
 
-if (!canHover) {
-    document.querySelectorAll(".photo-item").forEach((item) => {
-        item.addEventListener("click", () => {
-            item.classList.toggle("is-flipped");
+if (!canHover && !prefersReducedMotion && photoItems.length > 0 && photobooth) {
+
+    const photoDuration = 1400;   // durée d'affichage de chaque photo fun (ms)
+
+    let photoIndex = 0;
+    let photoTimer = null;
+
+    function showNextPhoto() {
+        photoItems.forEach((item, index) => {
+            item.classList.toggle("is-flipped", index === photoIndex);
         });
+
+        photoIndex = (photoIndex + 1) % photoItems.length;
+    }
+
+    function startPhotoLoop() {
+        if (photoTimer) return;
+
+        showNextPhoto();
+        photoTimer = setInterval(showNextPhoto, photoDuration);
+    }
+
+    function stopPhotoLoop() {
+        clearInterval(photoTimer);
+        photoTimer = null;
+
+        photoItems.forEach((item) => item.classList.remove("is-flipped"));
+    }
+
+    if ("IntersectionObserver" in window) {
+        new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    startPhotoLoop();
+                } else {
+                    stopPhotoLoop();
+                }
+            });
+        }, { threshold: 0.3 }).observe(photobooth);
+    } else {
+        startPhotoLoop();
+    }
+
+    // Pause quand l'onglet est en arrière-plan, reprise au retour
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            stopPhotoLoop();
+            return;
+        }
+
+        const rect = photobooth.getBoundingClientRect();
+
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+            startPhotoLoop();
+        }
     });
 }
 
